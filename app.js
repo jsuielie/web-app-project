@@ -18,13 +18,13 @@ let con = mysql.createConnection({
 con.connect();
 
 
-app.get('/board', function(req, res) {
-    con.query("SELECT * FROM Cards", (err, result, fields) => {
+app.get('/get-board/1', function(req, res) {
+    con.query("SELECT * FROM Cards WHERE BoardID = 1", (err, result, fields) => {
         if (err) throw err;
+        console.log(result);
         res.json(result);
     })
 });
-
 
 
 app.listen(port, (err) => {

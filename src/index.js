@@ -1,75 +1,38 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-class SingleCard extends React.Component {
-    render() {
-        return (
-            <li>
-                <pre>
-                    {this.props.cardContent}
-                </pre>
-            </li>
-        );
-    }
-}
 
-class MultipleCards extends React.Component {
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            msgs: []
+        }
+        this.fetchBoard = this.fetchBoard.bind(this);
+    }
+
+    componentDidMount() {
+        this.fetchBoard();
+    }
+
+    fetchBoard() {
+        urlString = "http://localhost:5000/get-board/1";
+        fetch(urlString, {method: "GET"})
+            .then(response => response.json())
+            .then(data =>{
+                console.log(data);
+                this.setState(data);
+            })
+    }
+
     render() {
         return (
             <div>
-                <div>
-                {this.props.msgs.map((msg, index) => <SingleCard key={index} cardContent={msg}></SingleCard>)}
-                </div>
+                {this.state.msgs.map((msg, index) => {<div key={index}>{msg}</div>})}
             </div>
         )
     }
 }
 
-class searchBoard extends React.Component {
-    
-    getBoard(event) {
-        event.preventDefault();
-        fetch("http://localhost:5000/board", {
-        })
-    }
-    
-    render() {
-        return(
-          <form onSubmit={}>
-              <label>Board Title:</label>
-              <textarea></textarea>
-              <button type="submit">Search</button>
-          </form>  
-        );
-    }
-}
 
-/*
-function Board() {
-    const [msgsOnBoard, setMsgsOnBoard] = useState(null);
-
-
-
-
-    return (
-    );
-}
-
-
-class App extends React.Component {
-
-    queryBoardIDByTitle(title) {
-
-        fetch(`http://localhost:5000/Board-store`)
-            .then(res => res.json())
-            .
-
-    }
-
-    render() {
-        retrun();
-    };
-}
-*/
-
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App/>, document.getElementById("root"));
