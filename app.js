@@ -4,6 +4,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 5000;
 const mysql = require("mysql");
+require('dotenv').config();
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('dist'));
@@ -24,6 +27,10 @@ app.get('/get-board/1', function(req, res) {
         console.log(result);
         res.json(result);
     })
+});
+
+app.get('/:id', function (req, res) {
+    res.sendFile(path.join(__dirname, "../dist/index.html"))
 });
 
 

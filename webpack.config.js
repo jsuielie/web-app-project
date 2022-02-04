@@ -1,5 +1,5 @@
 const path = require('path');
-const HtmlWebpackPlugin = require({ template: path.join(__dirname, 'src', 'index.html') });
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     mode: 'development',
