@@ -6,8 +6,7 @@ class SingleCardContent extends React.Component {
         return (
             <div>
                 <div>
-                    {"This is a card."}
-                    {this.props.msgs}
+                    {this.props.msg}
                 </div>
             </div>
         )
@@ -19,8 +18,7 @@ class Board extends React.Component {
         return (
             <div>
                 <div>
-                    {"This is a board."}
-                    {this.props.msgs.map( (msg, index) => <SingleCardContent msg={msg}/>)}
+                    {this.props.msgs.map( (msg, index) => <SingleCardContent key={index} msg={msg}/>)}
                 </div>
             </div>
         )
@@ -41,7 +39,7 @@ class App extends React.Component {
         fetch(urlString, { method: "GET" })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                console.log("This is front-end", data);
                 this.setState(data);
             })
     }
@@ -51,6 +49,7 @@ class App extends React.Component {
     }
 
     render() {
+        console.log(this.state);
         return (
             <div>
                 <Board msgs={this.state.BoardContent} />

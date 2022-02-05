@@ -20,19 +20,29 @@ let con = mysql.createConnection({
 });
 con.connect();
 
-
-app.get('/get-board/1', function(req, res) {
+/*
+app.get('/get-board/1', function (req, res) {
     con.query("SELECT * FROM Cards WHERE BoardID = 1", (err, result, fields) => {
         if (err) throw err;
         console.log(result);
-        res.json(result);
+        console.log("These are Msgs.");
+        result.map((object) => {console.log(object.Msgs)});
+        res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
     })
 });
+*/
 
-app.get('/:id', function (req, res) {
-    res.sendFile(path.join(__dirname, "../dist/index.html"))
+
+app.get('/get-board/:id', function (req, res) {
+    boardId = req.url.replace("/get-board/", "");
+    con.query(`SELECT * FROM Cards WHERE BoardID = ${boardId}`, (err, result, fields) => {
+        if (err) throw err;
+        console.log(result);
+        console.log("These are Msgs.");
+        result.map((object) => {console.log(object.Msgs)});
+        res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
+    })
 });
-
 
 app.listen(port, (err) => {
     if (err) console.log("Error in server setup")
