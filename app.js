@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-//const path = require('path');
+const path = require('path');
 const app = express();
 const port = 5000;
 const mysql = require("mysql");
@@ -9,37 +9,29 @@ require('dotenv').config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('dist'));
+app.use(express.static('dist')); // it makes the client side able to get the index.html and main.js when url pattern is "/".
 
 
-let con = mysql.createConnection({
+let con = mysql.createConnection({ // it makes connection to MySQL database possible
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
 });
-con.connect();
+con.connect(); // start the connection
 
-/*
-app.get('/get-board/1', function (req, res) {
-    con.query("SELECT * FROM Cards WHERE BoardID = 1", (err, result, fields) => {
-        if (err) throw err;
-        console.log(result);
-        console.log("These are Msgs.");
-        result.map((object) => {console.log(object.Msgs)});
-        res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
-    })
+app.get('/board/:id', function (req, res) { // http request to url "/board/:id" and get index.html file
+    console.log("get file from the path: ", path.join(__dirname, "/dist/index.html"));
+    res.sendFile(path.join(__dirname, "/dist/index.html"));
 });
-*/
 
-
-app.get('/get-board/:id', function (req, res) {
-    boardId = req.url.replace("/get-board/", "");
+app.get('/get-board/:boardId', function (req, res) {
+    let { boardId } = req.params;
     con.query(`SELECT * FROM Cards WHERE BoardID = ${boardId}`, (err, result, fields) => {
         if (err) throw err;
         console.log(result);
         console.log("These are Msgs.");
-        result.map((object) => {console.log(object.Msgs)});
+        result.map((object) => { console.log(object.Msgs) });
         res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
     })
 });
