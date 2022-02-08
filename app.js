@@ -27,7 +27,7 @@ app.get('/board/:id', function (req, res) { // http request to url "/board/:id" 
 
 app.get('/get-board/:boardId', function (req, res) {
     let { boardId } = req.params;
-    con.query(`SELECT * FROM Cards WHERE BoardID = ${boardId}`, (err, result, fields) => {
+    con.query("SELECT * FROM Cards WHERE BoardID = ?", [[[boardId]]], (err, result, fields) => {
         if (err) throw err;
         console.log(result);
         console.log("These are Msgs.");
@@ -35,6 +35,18 @@ app.get('/get-board/:boardId', function (req, res) {
         res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
     })
 });
+
+app.post('/store_message', (req, res) => {
+    console.log(req.body.cardContent);
+    con.query("INSERT INTO Cards (Msgs, BoardID) VALUES ?", [[[req.body.cardContent, req.body.BoardID]]], function (err, result, fields) {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ "message": "error" })
+        };
+        //console.log(result[0].LastName);
+        res.json({ "message": "success" });
+    })
+})
 
 app.listen(port, (err) => {
     if (err) console.log("Error in server setup")

@@ -17,10 +17,6 @@ function Board() {
             })
     }, []);
 
-    useEffect(() => {
-        console.log(msg, "This is useEffect");
-    });
-
     function addMsg(newMsg) {
         setMsg(msg.concat(newMsg));
     }
@@ -30,7 +26,7 @@ function Board() {
             <div>
                 {msg.map((singleMsg, index) => <SingleCardContent key={index} msg={singleMsg} />)}
             </div>
-            <AddCardForm addMsg={addMsg}/>
+            <AddCardForm addMsg={addMsg} BoardID={id}/>
         </div >
     )
 }

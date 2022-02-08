@@ -17,11 +17,10 @@ function AddCardForm(props) {
             alert("empty input~~");
         }
         else {
-            props.addMsg(cardContent);
             console.log('before fetch');
-/*
-            const data = { "msg": this.state.userinput };
-            fetch('http://localhost:3000/store_message', {
+
+            const data = { "cardContent": cardContent, "BoardID": props.BoardID };
+            fetch('http://localhost:5000/store_message', {
                 method: 'POST', // or 'PUT'
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,11 +30,13 @@ function AddCardForm(props) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data);
+                    props.addMsg(cardContent);
                 })
                 .catch((error) => {
                     console.error('Error:', error);
+                    alert('Error: fail to write card!!!');
                 });
-*/
+
             e.target.children[0].value = "";
             setCardContent("");
         }
