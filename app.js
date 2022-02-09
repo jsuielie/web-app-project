@@ -20,10 +20,11 @@ let con = mysql.createConnection({ // it makes connection to MySQL database poss
 });
 con.connect(); // start the connection
 
-app.get('/board/:id', function (req, res) { // http request to url "/board/:id" and get index.html file
+app.get(['/board/:id', '/board/:id/create'], function (req, res) { // http request to url "/board/:id" and get index.html file
     console.log("get file from the path: ", path.join(__dirname, "/dist/index.html"));
     res.sendFile(path.join(__dirname, "/dist/index.html"));
 });
+
 
 app.get('/get-board/:boardId', function (req, res) {
     let { boardId } = req.params;
