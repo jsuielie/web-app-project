@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
-import SingleCardContent from "./SingleCardContent";
+import SingleCard from "./SingleCard";
 import AddCardForm from "./AddCardForm";
 
 function Board() {
-    const [msg, setMsg] = useState([]);
+    const [cardsData, setCardsData] = useState([]);
 
     let { id } = useParams();
     console.log(id);
@@ -13,20 +13,20 @@ function Board() {
         fetch(`http://localhost:5000/get-board/${id}`, { method: "GET" }) // get board data from database
             .then(response => response.json())
             .then(data => {
-                setMsg(data.BoardContent);
+                setCardsData(data.BoardContent);
             })
     }, []);
 
-    function addMsg(newMsg) {
-        setMsg(msg.concat(newMsg));
+    function addCard(newCard) {
+        setCardsData(cardsData.concat(newCard));
     }
 
     return (
         < div >
             <div>
-                {msg.map((singleMsg, index) => <SingleCardContent key={index} msg={singleMsg} />)}
+                {cardsData.map((cardData, index) => <SingleCard key={index} cardData={cardData}/>)}
             </div>
-            <AddCardForm addMsg={addMsg} BoardID={id}/>
+            <AddCardForm addCard={addCard} BoardID={id} />
         </div >
     )
 }

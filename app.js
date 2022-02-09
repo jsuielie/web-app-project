@@ -27,25 +27,32 @@ app.get('/board/:id', function (req, res) { // http request to url "/board/:id" 
 
 app.get('/get-board/:boardId', function (req, res) {
     let { boardId } = req.params;
-    con.query("SELECT * FROM Cards WHERE BoardID = ?", [[[boardId]]], (err, result, fields) => {
+    con.query("SELECT CardID, Msgs, CreateTime, SenderLastName, SenderFirstName, ImageURL FROM Cards WHERE BoardID = ?", [[[boardId]]], (err, result, fields) => {
         if (err) throw err;
         console.log(result);
-        console.log("These are Msgs.");
-        result.map((object) => { console.log(object.Msgs) });
-        res.json({ BoardContent: result.map(obj => obj.Msgs) }) // retrieve element of array of objects and assign their properties to object's propreties
+        console.log("These are cards' data.");
+        res.json({ BoardContent: result.map(obj => { return { CardID: obj.CardID, Msgs: obj.Msgs, CreateTime: obj.CreateTime, SenderLastName: obj.SenderLastName, SenderFirstName: obj.SenderFirstName, ImageURL: obj.ImageURL } }) })
     })
 });
 
-app.post('/store_message', (req, res) => {
+app.post('/add-card', (req, res) => {
     console.log(req.body.cardContent);
-    con.query("INSERT INTO Cards (Msgs, BoardID) VALUES ?", [[[req.body.cardContent, req.body.BoardID]]], function (err, result, fields) {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ "message": "error" })
-        };
-        //console.log(result[0].LastName);
-        res.json({ "message": "success" });
-    })
+    con.query("INSERT INTO Cards (Msgs, BoardID, SenderLastName, SenderFirstName) VALUES ?",
+        [[[req.body.cardContent, req.body.BoardID, req.body.senderLastName, req.body.senderFirstName]]],
+        function (err, result, fields) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({ "message": "error" })
+            };
+            console.log(result);
+            con.query("SELECT CardID, Msgs, CreateTime, SenderLastName, SenderFirstName, ImageURL FROM Cards WHERE CardID = ?", [[[result.insertId]]], (err, result, fields) => {
+                if (err) throw err;
+                console.log(result);
+                console.log("These are cards' data.");
+                res.json(result.map(obj => { return { CardID: obj.CardID, Msgs: obj.Msgs, CreateTime: obj.CreateTime, SenderLastName: obj.SenderLastName, SenderFirstName: obj.SenderFirstName, ImageURL: obj.ImageURL } })[0])
+            })
+        }
+    )
 })
 
 app.listen(port, (err) => {
