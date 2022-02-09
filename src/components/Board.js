@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import SingleCard from "./SingleCard";
-import AddCardForm from "./AddCardForm";
 
 function Board() {
     const [cardsData, setCardsData] = useState([]);
@@ -17,16 +16,12 @@ function Board() {
             })
     }, []);
 
-    function addCard(newCard) {
-        setCardsData(cardsData.concat(newCard));
-    }
-
     return (
         < div >
             <div>
                 {cardsData.map((cardData, index) => <SingleCard key={index} cardData={cardData}/>)}
             </div>
-            <AddCardForm addCard={addCard} BoardID={id} />
+            <Link to={`/board/${id}/create`}>Add New Card</Link>
         </div >
     )
 }
