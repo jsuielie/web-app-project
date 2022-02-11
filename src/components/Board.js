@@ -17,7 +17,7 @@ function Board() {
     }, []);
 
     return (
-        < div >
+        < div>
             <div>
                 {cardsData.map((cardData, index) => <SingleCard key={index} cardData={cardData}/>)}
             </div>
