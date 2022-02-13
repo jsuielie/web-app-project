@@ -6,15 +6,29 @@ function AddCardForm() {
     const [senderFirstName, setSenderFirstName] = useState("");
     const [senderLastName, setSenderLastName] = useState("");
     const [cardContent, setCardContent] = useState("");
+    const [cardImage, setCardImage] = useState(null);
+    const [previewImageUrl, setPreviewImageUrl] = useState(null);
     const navigate = useNavigate();
     let { id: BoardID } = useParams();
 
 
-    function updateInput(e, stateSetter) {
-        console.log(e.target.value);
-        stateSetter(e.target.value);
+    function updateInput(e, stateSetter, value) {
+        console.log(value);
+        stateSetter(value);
     }
 
+    function onChangeImage(e) {
+        var reader = new FileReader();
+        console.log(e.target)
+        var url = reader.readAsDataURL(e.target.files[0]);
+
+        reader.onloadend = function (e) {
+            setPreviewImageUrl(reader.result)
+
+        };
+        setCardImage(e.target.files[0]);
+        console.log(url)
+    }
 
     function submitCard(e) {
         e.preventDefault();
@@ -33,18 +47,24 @@ function AddCardForm() {
         else {
             console.log('before fetch');
 
-            const data = { "cardContent": cardContent, "BoardID": BoardID, "senderLastName": senderLastName, "senderFirstName": senderFirstName };
+            let formData = new FormData();
+            formData.append("cardContent", cardContent);
+            formData.append("BoardID", BoardID);
+            formData.append("senderLastName", senderLastName);
+            formData.append("senderFirstName", senderFirstName);
+            formData.append("cardImage", cardImage);
+
+            console.log(formData);
+
+            //const data = { "cardContent": cardContent, "BoardID": BoardID, "senderLastName": senderLastName, "senderFirstName": senderFirstName };
 
             fetch('http://localhost:5000/add-card', {
                 method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+                body: formData,
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log(data.message);
                     navigate(`/board/${BoardID}`);
                 })
                 .catch((error) => {
@@ -53,8 +73,9 @@ function AddCardForm() {
                 });
 
 
+    
+
             console.log("~~This is sender's data and form's children~~");
-            console.log(data);
             console.log(e.target.children);
 
 
@@ -69,15 +90,18 @@ function AddCardForm() {
 
     return (
         <div>
-            <form onSubmit={(e) => submitCard(e)}>
+            <form encType="multipart/form-data" onSubmit={(e) => submitCard(e)}>
                 <label htmlFor="SendersFirstName">{"First name:"}</label>
                 <br />
-                <input type="text" name="SendersFirstName" onChange={(e) => updateInput(e, setSenderFirstName)} />
+                <input type="text" name="SendersFirstName" onChange={(e) => updateInput(e, setSenderFirstName, e.target.value)} />
                 <br />
                 <label htmlFor="SenderLastName">{"Last name:"}</label>
                 <br />
-                <input type="text" name="SenderLastName" onChange={(e) => updateInput(e, setSenderLastName)}></input>
-                <textarea placeholder="type some message here" onChange={(e) => updateInput(e, setCardContent)} rows="10"></textarea>
+                <input type="text" name="SenderLastName" onChange={(e) => updateInput(e, setSenderLastName, e.target.value)}></input>
+                <textarea placeholder="type some message here" onChange={(e) => updateInput(e, setCardContent, e.target.value)} rows="10"></textarea>
+                <br />
+                <input type="file" accept="image/*" onChange={(e) => onChangeImage(e)} />
+                {previewImageUrl ? <img src={previewImageUrl} /> : "no"}
                 <button type="submit">Submit!</button>
             </form>
         </div>

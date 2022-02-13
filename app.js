@@ -44,26 +44,6 @@ app.get('/get-board/:boardId', function (req, res) {
     })
 });
 
-app.post('/add-card', (req, res) => {
-    console.log(req.body.cardContent);
-    con.query("INSERT INTO Cards (Msgs, BoardID, SenderLastName, SenderFirstName) VALUES ?",
-        [[[req.body.cardContent, req.body.BoardID, req.body.senderLastName, req.body.senderFirstName]]],
-        function (err, result, fields) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ "message": "error" })
-            };
-            console.log(result);
-            con.query("SELECT CardID, Msgs, CreateTime, SenderLastName, SenderFirstName, ImageURL FROM Cards WHERE CardID = ?", [[[result.insertId]]], (err, result, fields) => {
-                if (err) throw err;
-                console.log(result);
-                console.log("These are cards' data.");
-                res.json(result.map(obj => { return { CardID: obj.CardID, Msgs: obj.Msgs, CreateTime: obj.CreateTime, SenderLastName: obj.SenderLastName, SenderFirstName: obj.SenderFirstName, ImageURL: obj.ImageURL } })[0])
-            })
-        }
-    )
-})
-
 
 // creating the storage variable to upload the file and providing the destination folder, 
 // if nothing is provided in the callback it will get uploaded in main directory
@@ -91,8 +71,71 @@ const upload = multer({
     fileFilter: filefilter
 });
 
+app.post('/add-card', upload.single('cardImage'), (req, res) => {
+
+    // Definning the params variable to uplaod the photo
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,      // bucket that we made earlier
+        Key: req.file.originalname,               // Name of the image
+        Body: req.file.buffer,                    // Body which will contain the image in buffer format
+        ACL: "public-read-write",                 // defining the permissions to get the public link
+        ContentType: "image/jpeg"                 // Necessary to define the image content-type to view the photo in the browser with the link
+    };
+
+    // uplaoding the photo using s3 instance and saving the link in the database.
+
+    s3.upload(params, (error, data) => {
+        if (error) {
+            res.status(500).json({ "message": "Something wrong when the image is being uploded..." })  // if we get any error while uploading error message will be returned.
+        }
+
+        // If not then below code will be executed
+
+        console.log(data);                     // this will give the information about the object in which photo is stored
+
+        console.log(req.body.cardContent);
+        con.query("INSERT INTO Cards (Msgs, BoardID, SenderLastName, SenderFirstName, ImageURL) VALUES ?",
+            [[[req.body.cardContent, req.body.BoardID, req.body.senderLastName, req.body.senderFirstName, data.Location]]],
+            function (err, result, fields) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({ "message": "Something wrong when card message is being uploded..." })
+                };
+            }
+        );
+        res.status(200).json({ "message": "Card message has been written." });
+    });
+})
+
+/*
+// creating the storage variable to upload the file and providing the destination folder, 
+// if nothing is provided in the callback it will get uploaded in main directory
+
+const storage = multer.memoryStorage({
+    destination: function (req, file, cb) {
+        cb(null, '')
+    }
+})
+
+// below variable is define to check the type of file which is uploaded
+
+const filefilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
+
+// defining the upload variable for the configuration of photo being uploaded
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 },
+    fileFilter: filefilter
+});
+
 // now how to handle the post request and to upload photo (upload photo using the key defined below in upload.single ie: productimage )
-app.post('/upload-image', upload.single('cardimage'), (req, res) => {
+app.post('/upload-image', upload.single('cardImage'), (req, res) => {
     console.log(req.file)  // to check the data in the console that is being uploaded
 
     // Definning the params variable to uplaod the photo
@@ -136,11 +179,11 @@ app.post('/upload-image', upload.single('cardimage'), (req, res) => {
                     res.send({ message: err })
               })
         })
-        */
+        
         res.json({ "mesg": "succeeded" })
     });
 })
-
+*/
 
 app.listen(port, (err) => {
     if (err) console.log("Error in server setup")
