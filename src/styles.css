@@ -1,29 +1,57 @@
-body {
+html, body {
     margin: 0;
+    width: 100%;
 }
 
 .navbar {
     overflow: hidden;
     height: 2.5rem;
-    background-color: #333;
+    background-color: rgb(97, 176, 89);
     position: fixed;
     /* Set the navbar to fixed position */
     top: 0;
     /* Position the navbar at the top of the page */
     width: 100%;
     /* Full width */
+    padding-right: 1rem;
+    padding-left: 1rem;
+    box-sizing: border-box;
 }
 
 .page-container {
     position: relative;
     min-height: 100vh;
+    width: 100%;
+    background-color: rgb(231, 235, 240);
 }
 
 .content-wrap {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
+    margin: 0rem 2rem 0rem 2rem;
     /* Footer height */
 }
+
+
+.board {
+    /*display: flex;
+    flex-direction:;*/
+    width: 100%;
+}
+
+.three-colunm-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.col {
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width:0;
+}
+
 
 .footer {
     position: absolute;

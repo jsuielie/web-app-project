@@ -1,10 +1,9 @@
 import React from "react";
 
 function Header() {
-
     return (
         <div>
-            {"This is header"}
+            {"This is still a header..."}
         </div>
     )
 };
