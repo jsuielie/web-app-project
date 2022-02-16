@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from 'react-router-dom';
-import ThreeColLayout from "./ThreeColLayout";
+import ColumnLayout from "./ColumnLayout";
+import BoardHeader from "./BoardHeader";
 
 function Board() {
     const [cardsData, setCardsData] = useState([]);
+    const [colNum, setColNum] = useState(3);
 
     let { id } = useParams();
     useEffect(() => {
@@ -21,8 +23,11 @@ function Board() {
 
     return (
         < div className="board">
+            <BoardHeader boardTitle={"title"} />
             <div><Link to={`/board/${id}/create`}>Add New Card</Link></div>
-            <ThreeColLayout cardsData={cardsData} />
+            <div className="main-layout">
+                <ColumnLayout cardsData={cardsData} colNum={colNum} />
+            </div>
         </div >
     )
 }

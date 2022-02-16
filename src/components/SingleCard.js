@@ -7,6 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import { CardActionArea } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import moment from 'moment';
 /*
 class SingleCard extends React.Component {
     render() {
@@ -28,6 +29,7 @@ export default SingleCard;
 */
 
 export default function SingleCard(props) {
+    const date = moment(props.cardData.CreateTime, "YYYY-MM-DDThh:mm:ss.SSSZ");
     return (
         <div style={{ padding: "20px", "boxSizing": "border-box", width: "100%" }}>
             <Card sx={{ maxWidth: "100%" }}>
@@ -44,7 +46,7 @@ export default function SingleCard(props) {
                         {props.cardData.SenderLastName}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {props.cardData.CreateTime}
+                        {date.format("YYYY/MM/DD")}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         {props.cardData.Msgs}
